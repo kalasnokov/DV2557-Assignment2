@@ -12,16 +12,18 @@ import java.util.Arrays;
 public class Tree<T>{
 
     T data;
+    boolean myTurn;
     Tree<T> parent;
     List<Tree<T>> children;
 
-    public Tree(T data) {
+    public Tree(T data, boolean myTurn) {
+        this.myTurn = myTurn;
         this.data = data;
         this.children = new LinkedList<Tree<T>>();
     }
 
-    public Tree<T> addChild(T child) {
-        Tree<T> childNode = new Tree<T>(child);
+    public Tree<T> addChild(T child, boolean myTurn) {
+        Tree<T> childNode = new Tree<T>(child, myTurn);
         childNode.parent = this;
         this.children.add(childNode);
         return childNode;
