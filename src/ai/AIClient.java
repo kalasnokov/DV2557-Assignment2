@@ -263,21 +263,10 @@ public class AIClient implements Runnable
     
     public int getMove(GameState currentBoard)
     {
-        Tree<Integer> root = new Tree<Integer>(0, true);
-        genTree(root, 4);
-        int[] scores = new int[6];
-        for(int i = 0; i < 6; i++){
-            scores[i] = DS((Tree<Integer>)root.children.get(i));
-        }
-        
-        int highest = 0;
-        for(int i = 0; i < 6; i++){
-            if(scores[i] > scores[highest]){
-                highest = i;
-            }
-        }
-        
-        int myMove = highest;
+        Node root = new Node(null, 0, true, -1);
+        root.genTreeFullDepth(root, 4, player);
+        addText(root.printTree(root));
+        int myMove = getRandom();
         return myMove;
     }
     
