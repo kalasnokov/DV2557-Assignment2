@@ -17,46 +17,90 @@ public class Node {
     int depth;
     int score;//self explanatory
     int myMove = 0;//move from parent node to get here
+    boolean valid = true;
     boolean myTurn;
     
     Node[] children = new Node[6];//position represents move
     
-    public Node(Node parent, int score, boolean myTurn, int depth){
+    public Node(Node parent, int score, boolean myTurn, int depth, boolean valid){
         this.parent = parent;
+        this.score = score;
+        this.myTurn = myTurn;
+        this.depth = depth;
+        this.valid = valid;
     }
     
     public void addChild(Node child, int pos){
         children[pos] = child;
     }
     
-    public void genTreeFullDepth(Node root, int depth, int myPlayer){
-        for(int i = 0; i < 6; i ++){
-            GameState predict = new GameState();
-            predict.makeMove(i);
-            int score = predict.getScore(myPlayer);
-            int nextPlayer = predict.getNextPlayer();
-            boolean myTurn = false;
-            if(nextPlayer == myPlayer){
-                myTurn = true;
-            }
-            root.addChild(new Node(root, score, myTurn, depth), i);
-        }
-        depth--;
-        if(depth > 0){
-            for(int i = 0; i < 6; i ++){
-                genTreeFullDepth(children[i], depth, myPlayer);
-            }
-        }
-        return;
+    public boolean isEmpty(){
+        return (children[0] == null);
     }
     
-    public String printTree(Node root){
+    public String genTreeFullDepth(Node root, int depth, int myPlayer, GameState state){
         String ret = "";
-        ret += "Node with depth " + root.depth + " and score " + root.score + "\n";
+        GameState predict = state.clone();
+        for(int i = 0; i < 6; i ++){
+            boolean pValid = predict.moveIsPossible(i);
+            predict.makeMove(i);
+            int pScore = predict.getScore(myPlayer);
+            int nextPlayer = predict.getNextPlayer();
+            //ret += nextPlayer + " != " + myPlayer + "\n";
+            boolean pMyTurn = false;
+            if(nextPlayer == myPlayer){
+                pMyTurn = true;
+            }
+            ret += "Node " + score + " : " + depth + "\n";
+            root.addChild(new Node(root, pScore, pMyTurn, depth, pValid), i);
+        }
+        depth = depth - 1;
+        if(depth > 0){
+            for(int i = 0; i < 6; i ++){
+                ret += genTreeFullDepth(children[i], depth, myPlayer, predict);
+            }
+        }
+        return ret;
+    }
+    
+    public int DS(){
+        int ret = 0;
+        
+        int mult = 1;
+        if(!myTurn){
+            mult = -1;
+        }
+        
+        if(!isEmpty()){//node has children
+            int[] scores = new int[6];
+            for(int i = 0; i < 6; i++){
+                scores[i] = children[i].DS();
+            }
+            
+            int highest = 0;
+            for(int i = 0; i < 6; i++){
+                if(scores[i] > scores[highest]){
+                    highest = i;
+                }
+            }
+            
+            ret = (score * mult) + scores[highest];
+        } else{//final node
+            ret = score * mult;
+        }
+        return ret;
+    }
+    
+    public String printNode(){
+        return "Node with depth " + depth + ", score " + score + ", myTurn: " + myTurn + ".\n";
+    }
+    
+    public String printTree(){
+        String ret = "";
+        ret += printNode();
         for(int i = 0; i < 6; i++){
-            if(root.children[i] != null){
-                ret += "Child found\n";
-                ret += root.printTree(root.children[i]);
+            if(children[i] != null){
+                ret += children[i].printTree();
             }
         }
         return ret;

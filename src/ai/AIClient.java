@@ -211,62 +211,28 @@ public class AIClient implements Runnable
      * @return Move to make (1-6)
      */
     
-    public void genTree(Tree T, int d){
-        for(int i = 0; i < 6; i ++){
-            GameState predict = new GameState();
-            predict.makeMove(i);
-            int score = predict.getScore(player);
-            int nextPlayer = predict.getNextPlayer();
-            boolean myTurn = false;
-            if(nextPlayer == player){
-                myTurn = true;
-            }
-            T.addChild(score, myTurn);
-        }
-        d--;
-        if(d > 0){
-            for(int i = 0; i < 6; i ++){
-                genTree((Tree<Integer>)T.children.get(i), d);
-            }
-        }
-        return;
-    }
-    
-    public int DS(Tree T){
-        int ret = 0;
-        
-        int mult = 1;
-        if(!T.myTurn){
-            mult = -1;
-        }
-        
-        if(!T.children.isEmpty()){//node has children
-            int[] scores = new int[6];
-            for(int i = 0; i < 6; i++){
-                scores[i] = DS((Tree<Integer>)T.children.get(i));
-            }
-            
-            int highest = 0;
-            for(int i = 0; i < 6; i++){
-                if(scores[i] > scores[highest]){
-                    highest = i;
-                }
-            }
-            
-            ret = ((int)T.data * mult) + scores[highest];
-        } else{//final node
-            addText("Final node reached..");
-            ret = (int)T.data * mult;
-        }
-        return ret;
-    }
-    
     public int getMove(GameState currentBoard)
     {
-        Node root = new Node(null, 0, true, -1);
-        root.genTreeFullDepth(root, 4, player);
-        addText(root.printTree(root));
-        int myMove = getRandom();
+        Node root = new Node(null, 0, true, -1, true);
+        addText("Generating tree...");
+        root.genTreeFullDepth(root, 4, player, currentBoard);
+        addText("Generation done!");
+        //root.printTree();
+        
+        int[] scores = new int[6];
+        for(int i = 0; i < 6; i++){
+            scores[i] = root.children[i].DS();
+        }
+        
+        int highest = 1;
+        for(int i = 1; i < 5; i++){
+            if(scores[i] > scores[highest] && root.children[i].valid){
+                highest = i;
+            }
+        }
+        int myMove = highest;
+        
+        addText("Move chosen: " + myMove);
         return myMove;
     }
     
