@@ -225,14 +225,15 @@ public class AIClient implements Runnable
         }
         
         int highest = 1;
-        for(int i = 1; i < 5; i++){
+        for(int i = 0; i < 6; i++){
             if(scores[i] > scores[highest] && root.children[i].valid){
                 highest = i;
             }
         }
-        int myMove = highest;
+        int myMove = highest + 1;
         
         addText("Move chosen: " + myMove);
+        addText(root.children[myMove-1].printNode());
         return myMove;
     }
     

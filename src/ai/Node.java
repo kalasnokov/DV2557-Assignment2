@@ -16,8 +16,8 @@ public class Node {
     Node parent = null;
     int depth;
     int score;//self explanatory
-    int myMove = 0;//move from parent node to get here
-    boolean valid = true;
+    int myMove;//move from parent node to get here
+    boolean valid;
     boolean myTurn;
     
     Node[] children = new Node[6];//position represents move
@@ -40,11 +40,17 @@ public class Node {
     
     public String genTreeFullDepth(Node root, int depth, int myPlayer, GameState state){
         String ret = "";
-        GameState predict = state.clone();
+        GameState predict;
         for(int i = 0; i < 6; i ++){
-            boolean pValid = predict.moveIsPossible(i);
-            predict.makeMove(i);
-            int pScore = predict.getScore(myPlayer);
+            predict = state.clone();
+            int pScore = 0;
+            boolean pValid = predict.moveIsPossible(i + 1);
+            if(!pValid){
+                pScore = -100000;
+            }else{
+                predict.makeMove(i + 1);
+                pScore = predict.getScore(myPlayer);
+            }
             int nextPlayer = predict.getNextPlayer();
             //ret += nextPlayer + " != " + myPlayer + "\n";
             boolean pMyTurn = false;
@@ -56,6 +62,7 @@ public class Node {
         }
         depth = depth - 1;
         if(depth > 0){
+            predict = state.clone();
             for(int i = 0; i < 6; i ++){
                 ret += genTreeFullDepth(children[i], depth, myPlayer, predict);
             }
@@ -92,7 +99,7 @@ public class Node {
     }
     
     public String printNode(){
-        return "Node with depth " + depth + ", score " + score + ", myTurn: " + myTurn + ".\n";
+        return "Node with depth " + depth + ", score " + score + ", myTurn: " + myTurn + ", valid: " + valid + ".\n";
     }
     
     public String printTree(){
