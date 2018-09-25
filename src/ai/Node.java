@@ -107,7 +107,7 @@ public class Node {
     }
     
     public Node IDDF(){
-        for(int i = 0; i < 1000000; i++){
+        for(int i = 0; i < 100000000; i++){
             IDDFRETURN ret = DLS(i);
             if(ret.found != null){
                 return ret.found;
