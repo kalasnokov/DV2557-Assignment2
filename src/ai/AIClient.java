@@ -2,6 +2,7 @@ package ai;
 
 import ai.Global;
 import java.io.*;
+import java.util.*; 
 import java.net.*;
 import javax.swing.*;
 import java.awt.*;
@@ -236,7 +237,6 @@ public class AIClient implements Runnable
         addText(root.children[myMove-1].printNode());
         return myMove;
     }
-    
     /**
      * Returns a random ambo number (1-6) used when making
      * a random move.
