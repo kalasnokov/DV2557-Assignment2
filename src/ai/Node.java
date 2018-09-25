@@ -19,6 +19,7 @@ public class Node {
     int myMove;//move from parent node to get here
     boolean valid;
     boolean myTurn;
+    boolean victoryNode = false;
     
     Node[] children = new Node[6];//position represents move
     
@@ -38,6 +39,51 @@ public class Node {
         return (children[0] == null);
     }
     
+    public class IDDFRETURN{
+        Node found = null;
+        boolean remaining = false;
+    }
+    
+    public IDDFRETURN DLS(int depth){
+        IDDFRETURN ret = new IDDFRETURN();
+        if(depth == 0){
+            if(victoryNode){
+                ret.found = this;
+                return ret;
+            }else{
+                ret.remaining = true;
+                return ret;
+            }
+        }else if(depth > 0){
+            boolean rem = false;
+            for(int i = 0; i < 6; i++){
+                IDDFRETURN NRET = children[i].DLS(depth-1);
+                if(NRET.found != null){
+                    ret.found = NRET.found;
+                    return ret;
+                }
+                if(NRET.remaining){
+                    rem = true;
+                }
+            }
+            ret.remaining = rem;
+            return ret;
+        }
+        return null;//should never be reached...
+    }
+    
+    public Node IDDF(){
+        for(int i = 0; i < 1000000; i++){
+            IDDFRETURN ret = DLS(i);
+            if(ret.found != null){
+                return ret.found;
+            }else if (!ret.remaining){
+                return null;
+            }
+        }
+        return null;
+    }
+    
     public String genTreeFullDepth(Node root, int depth, int myPlayer, GameState state){
         String ret = "";
         GameState predict;
@@ -46,7 +92,7 @@ public class Node {
             int pScore = 0;
             boolean pValid = predict.moveIsPossible(i + 1);
             if(!pValid){
-                pScore = -100000;
+                pScore = -100000000;
             }else{
                 predict.makeMove(i + 1);
                 pScore = predict.getScore(myPlayer);
