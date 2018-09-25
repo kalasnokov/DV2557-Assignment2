@@ -117,11 +117,6 @@ public class Node {
         return ret;
     }
     
-    static public int minimax()
-    {
-        return -1;
-    }
-    
     public int DS(){
         int ret = 0;
         
