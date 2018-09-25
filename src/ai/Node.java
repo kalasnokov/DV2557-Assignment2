@@ -1,3 +1,4 @@
+
 package ai;
 
 import ai.Global;
@@ -114,6 +115,11 @@ public class Node {
             }
         }
         return ret;
+    }
+    
+    static public int minimax()
+    {
+        return -1;
     }
     
     public int DS(){
