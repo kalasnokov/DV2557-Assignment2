@@ -115,6 +115,7 @@ public class Node {
             for(int i = 0; i < 6; i++){
                 System.out.println("DLS loop i = " + i);
                 GameState predict = state.clone();
+                if(predict.moveIsPossible(i + 1)){
                 predict.makeMove(i + 1);
                 System.out.println("1");
                 if(isEmpty()){//leaf node
@@ -124,6 +125,7 @@ public class Node {
                 System.out.println("2");
                 IDDFRETURN NRET = children[i].DLS(depth-1, player, predict);
                 System.out.println("3");
+
                 if(NRET.found != null){
                     System.out.println("Found goal.");
                     ret.found = NRET.found;
@@ -134,6 +136,8 @@ public class Node {
                 }
                 ret.leafList = NRET.leafList;
                 ret.LLlen = NRET.LLlen;
+                }
+                
             }
             ret.remaining = rem;
             return ret;
