@@ -116,26 +116,28 @@ public class Node {
                 System.out.println("DLS loop i = " + i);
                 GameState predict = state.clone();
                 if(predict.moveIsPossible(i + 1)){
-                predict.makeMove(i + 1);
-                System.out.println("1");
-                if(isEmpty()){//leaf node
-                    addChild(new Node(this, 0, (predict.getNextPlayer() == player), depth, true), i);
-                    children[i].calcScore(predict, player);
-                }
-                System.out.println("2");
-                IDDFRETURN NRET = children[i].DLS(depth-1, player, predict);
-                System.out.println("3");
+                    predict.makeMove(i + 1);
+                    System.out.println("1");
+                    if(isEmpty()){//leaf node
+                        addChild(new Node(this, 0, (predict.getNextPlayer() == player), depth, true), i);
+                        children[i].calcScore(predict, player);
+                    }
+                    System.out.println("2");
+                    IDDFRETURN NRET = children[i].DLS(depth-1, player, predict);
+                    System.out.println("3");
 
-                if(NRET.found != null){
-                    System.out.println("Found goal.");
-                    ret.found = NRET.found;
-                    return ret;
-                }
-                if(NRET.remaining){
-                    rem = true;
-                }
-                ret.leafList = NRET.leafList;
-                ret.LLlen = NRET.LLlen;
+                    if(NRET.found != null){
+                        System.out.println("Found goal.");
+                        ret.found = NRET.found;
+                        return ret;
+                    }
+                    if(NRET.remaining){
+                        rem = true;
+                    }
+                    ret.leafList = NRET.leafList;
+                    ret.LLlen = NRET.LLlen;
+                }else{
+                    addChild(null, i);
                 }
                 
             }
