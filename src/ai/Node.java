@@ -17,6 +17,8 @@ public class Node {
     Node parent = null;
     int depth;
     int score;//self explanatory
+    int otherScore;
+    int dScore;
     int myMove;//move from parent node to get here
     boolean valid;
     boolean myTurn;
@@ -37,23 +39,19 @@ public class Node {
     }
     
     public boolean isEmpty(){
-        return (children[0] == null);
+        return (children[5] == null);
     }
     
-    public int calcScore(GameState state, int myPlayer){//only calculates for own player, needs min version for calculating other player
-        int mult = 1;
-        int player = myPlayer;
-        if(!myTurn){
-            mult = -1;
-            player = 3 - player;
-        }
-        victoryNode = (state.getWinner() == player);
-        score = state.getScore(player) * 25;
+    public void calcScore(GameState state, int myPlayer){//only calculates for own player, needs min version for calculating other player
+        int otherPlayer = 3 - myPlayer;
+        victoryNode = (state.getWinner() == myPlayer);
+        score = state.getScore(myPlayer) * 25;
+        otherScore = state.getScore(otherPlayer) * 25;
         for(int i = 0; i < 6; i++){
-            score += state.getSeeds(i, player);
+            score += state.getSeeds(i, myPlayer);
+            otherScore += state.getSeeds(i, otherPlayer);
         }
-        score *= mult;
-        return score;
+        dScore = score - otherScore;
     }
     
     static int inf = 10000;
@@ -93,15 +91,18 @@ public class Node {
     public class IDDFRETURN{
         Node found = null;
         boolean remaining = false;
-        Node leafList[] = {};
+        Node leafList[] = new Node[6];
         int LLlen = 0;
     }
     
     public IDDFRETURN DLS(int depth, int player, GameState state){
         IDDFRETURN ret = new IDDFRETURN();
         if(depth == 0){
+            
+            System.out.println("Max depth reached.");
             ret.leafList[ret.LLlen] = this;
             ret.LLlen++;
+            System.out.println("LL set.");
             if(victoryNode){
                 ret.found = this;
                 return ret;
@@ -112,23 +113,27 @@ public class Node {
         }else if(depth > 0){
             boolean rem = false;
             for(int i = 0; i < 6; i++){
+                System.out.println("DLS loop i = " + i);
                 GameState predict = state.clone();
                 predict.makeMove(i + 1);
-                
+                System.out.println("1");
                 if(isEmpty()){//leaf node
-                    addChild(new Node(this, 0, (predict.getNextPlayer() == player), depth, true),i);
+                    addChild(new Node(this, 0, (predict.getNextPlayer() == player), depth, true), i);
                     children[i].calcScore(predict, player);
                 }
-                
+                System.out.println("2");
                 IDDFRETURN NRET = children[i].DLS(depth-1, player, predict);
-                
+                System.out.println("3");
                 if(NRET.found != null){
+                    System.out.println("Found goal.");
                     ret.found = NRET.found;
                     return ret;
                 }
                 if(NRET.remaining){
                     rem = true;
                 }
+                ret.leafList = NRET.leafList;
+                ret.LLlen = NRET.LLlen;
             }
             ret.remaining = rem;
             return ret;
@@ -137,15 +142,25 @@ public class Node {
     }
     
     public Node IDDF(int player, GameState state){
-        for(int i = 0; i < inf; i++){
-            IDDFRETURN ret = DLS(i, player, state);
+        IDDFRETURN ret = new IDDFRETURN();
+        for(int i = 0; i < 4; i++){
+            System.out.println("D = " + i);
+            ret = DLS(i, player, state);
+            System.out.println("DLS returned.");
             if(ret.found != null){
                 return ret.found;
-            }else if (!ret.remaining){//determine best leaf here.
+            }else if (!ret.remaining){
                 return null;
             }
         }
-        return null;
+        Node chosenNode = ret.leafList[0];
+        System.out.println("leafList length = " + ret.LLlen);
+        for(int n = 1; n < ret.LLlen; n++){
+            if(chosenNode.dScore < ret.leafList[n].dScore){
+                chosenNode = ret.leafList[n];
+            }
+        }
+        return chosenNode;
     }
     public String genTreeFullDepth(Node root, int depth, int myPlayer, GameState state){
         String ret = "";
