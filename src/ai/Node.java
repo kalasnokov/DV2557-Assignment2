@@ -39,7 +39,14 @@ public class Node {
     }
     
     public boolean isEmpty(){
-        return (children[5] == null);
+        boolean found = false;
+        for(int i = 0; i < 6; i ++){
+            if(children[i] == null){
+                found = true;
+            }
+        }
+        System.out.println("IsEmpty: " + found);
+        return found;
     }
     
     public void calcScore(GameState state, int myPlayer){//only calculates for own player, needs min version for calculating other player
@@ -149,7 +156,7 @@ public class Node {
     
     public Node IDDF(int player, GameState state){
         IDDFRETURN ret = new IDDFRETURN();
-        for(int i = 0; i < 4; i++){
+        for(int i = 0; i < 6; i++){
             System.out.println("D = " + i);
             ret = DLS(i, player, state);
             System.out.println("DLS returned.");

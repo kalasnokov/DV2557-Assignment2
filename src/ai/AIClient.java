@@ -215,6 +215,7 @@ public class AIClient implements Runnable
     public int getMove(GameState currentBoard)
     {
         Node root = new Node(null, 0, true, -1, true);
+        root.parent = root;
         int myMove = 0;
         /*addText("Generating tree...");
         root.genTreeFullDepth(root, 4, player, currentBoard);
@@ -239,17 +240,26 @@ public class AIClient implements Runnable
         addText("IDDF starting!");
         Node goal = root.IDDF(player, currentBoard);
         addText("IDDF complete");
-        Node toRoot = goal;
-        addText("toRoot set");
-        while(toRoot.parent != root){
-            toRoot = toRoot.parent;
-        }
-        addText("next node found");
-        for(int i = 0; i < 6; i++){
-            if(root.children[i] == toRoot){
-                myMove = i + 1;
+        if(goal != null){
+            Node toRoot = goal;
+            addText("toRoot set");
+            while(toRoot.parent != root){
+                toRoot = toRoot.parent;
+            }
+            addText("next node found");
+            for(int i = 0; i < 6; i++){
+                if(root.children[i] == toRoot){
+                    myMove = i + 1;
+                }
+            }
+        } else {
+            for(int i = 0; i < 6; i++){
+                if(currentBoard.moveIsPossible(i + 1)){
+                    myMove = i + 1;
+                }
             }
         }
+        
         return myMove;
     }
     /**
