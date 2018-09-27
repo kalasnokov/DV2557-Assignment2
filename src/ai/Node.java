@@ -60,41 +60,7 @@ public class Node {
         }
         dScore = score - otherScore;
     }
-    
-    static int inf = 10000;
-    int alphabeta(Node node, int depth, int alpha, int beta, boolean maximizingPlayer)
-    {
-        if(depth == 0 && valid && parent.valid)
-        {
-            return node.score;
-        }
-        if(maximizingPlayer)
-        {
-            int value = -inf;
-            for(Node c : children)
-            {
-                value = Math.max(value, alphabeta(c, depth - 1, alpha, beta, false));
-                alpha = Math.max(alpha, value);
-                if (alpha >= beta)
-                {
-                    break;
-                }
-            }
-            return value;
-        }
-        else
-        {
-            int value = inf;
-            for(Node c : children)
-            {
-                value = Math.min(value, alphabeta(c, depth - 1, alpha, beta, true));
-                beta = Math.min(beta, value);
-                if(alpha >= beta)
-                    break;      
-            }
-            return value;
-        }
-    }
+
     public class IDDFRETURN{
         Node found = null;//goal node
     }
@@ -167,7 +133,7 @@ public class Node {
         }
         return ret;//goal found
     }
-    public String genTreeFullDepth(Node root, int depth, int myPlayer, GameState state){
+    /*public String genTreeFullDepth(Node root, int depth, int myPlayer, GameState state){
         String ret = "";
         GameState predict;
         for(int i = 0; i < 6; i ++){
@@ -197,7 +163,7 @@ public class Node {
             }
         }
         return ret;
-    }
+    }*/
     
     public int DS(){
         int ret = 0;
