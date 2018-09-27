@@ -6,6 +6,7 @@ import java.io.*;
 import java.net.*;
 import javax.swing.*;
 import java.awt.*;
+import java.time.*;
 import kalaha.*;
 
 /**
@@ -125,6 +126,17 @@ public class Node {
     
     public Node IDDF(int player, GameState state){
         Node ret = null;
+        /*int i = 0;
+        long start = System.currentTimeMillis();
+        long dt = 0;
+        do {
+            //System.out.println("D = " + i);
+            ret = DLS(i, player, state);//move to next phase and do depth search
+            i++;
+            dt = (System.currentTimeMillis() - start);
+            System.out.println(dt);
+        } while(dt > 4000);
+        */
         for(int i = 0; i < 6; i++){//loop through different depths, the 6 is temporary and will be replaces with the time limited version
             System.out.println("D = " + i);
             ret = DLS(i, player, state);//move to next phase and do depth search

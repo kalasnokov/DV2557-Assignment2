@@ -217,26 +217,7 @@ public class AIClient implements Runnable
         Node root = new Node(null, 0, true, -1, true);
         root.parent = root;
         int myMove = 0;
-        /*addText("Generating tree...");
-        root.genTreeFullDepth(root, 4, player, currentBoard);
-        addText("Generation done!");
-        //root.printTree();
-        
-        int[] scores = new int[6];
-        for(int i = 0; i < 6; i++){
-            scores[i] = root.children[i].DS();
-        }
-        
-        int highest = 1;
-        for(int i = 0; i < 6; i++){
-            if(scores[i] > scores[highest] && root.children[i].valid){
-                highest = i;
-            }
-        }
-        myMove = highest + 1;
-        
-        addText("Move chosen: " + myMove);
-        addText(root.children[myMove-1].printNode());*/
+
         addText("IDDF starting!");
         Node goal = root.IDDF(player, currentBoard);//find optimal node
         addText("IDDF complete");
