@@ -126,23 +126,24 @@ public class Node {
     
     public Node IDDF(int player, GameState state){
         Node ret = null;
-        /*int i = 0;
+        int i = 0;
         long start = System.currentTimeMillis();
         long dt = 0;
         do {
             //System.out.println("D = " + i);
+            //Måste fixa något sätt att skala med djupet
             ret = DLS(i, player, state);//move to next phase and do depth search
             i++;
             dt = (System.currentTimeMillis() - start);
             System.out.println(dt);
-        } while(dt > 4000);
-        */
+        } while(dt < 1300);
+       /*
         for(int i = 0; i < 6; i++){//loop through different depths, the 6 is temporary and will be replaces with the time limited version
             System.out.println("D = " + i);
             ret = DLS(i, player, state);//move to next phase and do depth search
             System.out.println("DLS returned.");
             
-        }
+        }*/
         return ret;//goal found
     }
     /*public String genTreeFullDepth(Node root, int depth, int myPlayer, GameState state){
