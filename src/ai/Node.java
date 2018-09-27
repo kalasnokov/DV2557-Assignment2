@@ -96,84 +96,85 @@ public class Node {
         }
     }
     public class IDDFRETURN{
-        Node found = null;
-        boolean remaining = false;
-        Node leafList[] = new Node[6];
+        Node found = null;//goal node
+        boolean remaining = false;//is ther any more nodes in the tree?
+        Node leafList[] = new Node[6];//list of nodes that are usable istead of goal
         int LLlen = 0;
     }
     
     public IDDFRETURN DLS(int depth, int player, GameState state){
         IDDFRETURN ret = new IDDFRETURN();
-        if(depth == 0){
+        if(depth == 0){//we are at the bottom of the search
             
             System.out.println("Max depth reached.");
-            ret.leafList[ret.LLlen] = this;
+            ret.leafList[ret.LLlen] = this;//add node to leaflist
             ret.LLlen++;
             System.out.println("LL set.");
-            if(victoryNode){
+            
+            if(victoryNode){//check if it is a goal
                 ret.found = this;
                 return ret;
             }else{
                 ret.remaining = true;
                 return ret;
             }
-        }else if(depth > 0){
+        }else if(depth > 0){//bottom not reached, expand search
             boolean rem = false;
-            for(int i = 0; i < 6; i++){
+            for(int i = 0; i < 6; i++){//check all nodes
                 System.out.println("DLS loop i = " + i);
                 GameState predict = state.clone();
-                if(predict.moveIsPossible(i + 1)){
+                if(predict.moveIsPossible(i + 1)){//make sure move is legal
                     predict.makeMove(i + 1);
                     System.out.println("1");
-                    if(isEmpty()){//leaf node
-                        addChild(new Node(this, 0, (predict.getNextPlayer() == player), depth, true), i);
+                    if(children[i] == null){//Check to see if node has been expanded
+                        addChild(new Node(this, 0, (predict.getNextPlayer() == player), depth, true), i);//expand node
                         children[i].calcScore(predict, player);
                     }
                     System.out.println("2");
-                    IDDFRETURN NRET = children[i].DLS(depth-1, player, predict);
+                    IDDFRETURN NRET = children[i].DLS(depth-1, player, predict);//go deeper
                     System.out.println("3");
 
                     if(NRET.found != null){
                         System.out.println("Found goal.");
-                        ret.found = NRET.found;
+                        ret.found = NRET.found;//goal found
                         return ret;
                     }
                     if(NRET.remaining){
                         rem = true;
                     }
-                    ret.leafList = NRET.leafList;
+                    ret.leafList = NRET.leafList;//set the leaflist
                     ret.LLlen = NRET.LLlen;
                 }else{
-                    addChild(null, i);
+                    addChild(null, i);//node is invalid
                 }
                 
             }
             ret.remaining = rem;
-            return ret;
+            return ret;//return leaflist or goal
         }
         return null;//should never be reached...
     }
     
     public Node IDDF(int player, GameState state){
         IDDFRETURN ret = new IDDFRETURN();
-        for(int i = 0; i < 6; i++){
+        for(int i = 0; i < 6; i++){//loop through different depths, the 6 is temporary and will be replaces with the time limited version
             System.out.println("D = " + i);
-            ret = DLS(i, player, state);
+            ret = DLS(i, player, state);//move to next phase and do depth search
             System.out.println("DLS returned.");
             if(ret.found != null){
-                return ret.found;
+                return ret.found;//goal found
             }else if (!ret.remaining){
-                return null;
+                return null;//search has fully completed, but no optimal node found (this should be what is actually fucking shit up when only one move can be made, needs a do-over)
             }
         }
-        Node chosenNode = ret.leafList[0];
+        Node chosenNode = ret.leafList[0];//leaflist contains all the deepest nodes in the search
         System.out.println("leafList length = " + ret.LLlen);
-        for(int n = 1; n < ret.LLlen; n++){
-            if(chosenNode.dScore < ret.leafList[n].dScore){
+        for(int n = 1; n < ret.LLlen; n++){//loop through them...
+            if(chosenNode.dScore < ret.leafList[n].dScore){//select the one with the highest score delta
                 chosenNode = ret.leafList[n];
             }
         }
-        return chosenNode;
+        return chosenNode;//return goal node
     }
     public String genTreeFullDepth(Node root, int depth, int myPlayer, GameState state){
         String ret = "";

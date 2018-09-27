@@ -238,29 +238,29 @@ public class AIClient implements Runnable
         addText("Move chosen: " + myMove);
         addText(root.children[myMove-1].printNode());*/
         addText("IDDF starting!");
-        Node goal = root.IDDF(player, currentBoard);
+        Node goal = root.IDDF(player, currentBoard);//find optimal node
         addText("IDDF complete");
-        if(goal != null){
+        if(goal != null){//if goal is null something went wrong
             Node toRoot = goal;
             addText("toRoot set");
-            while(toRoot.parent != root){
+            while(toRoot.parent != root){//backtrace back to root to find next move
                 toRoot = toRoot.parent;
             }
             addText("next node found");
-            for(int i = 0; i < 6; i++){
+            for(int i = 0; i < 6; i++){//figure out which move was made by checking next node to root node
                 if(root.children[i] == toRoot){
                     myMove = i + 1;
                 }
             }
         } else {
             for(int i = 0; i < 6; i++){
-                if(currentBoard.moveIsPossible(i + 1)){
+                if(currentBoard.moveIsPossible(i + 1)){//IDDFS returned null, make any possible move (this only happens when only one move is possible)
                     myMove = i + 1;
                 }
             }
         }
         
-        return myMove;
+        return myMove;//make move
     }
     /**
      * Returns a random ambo number (1-6) used when making
