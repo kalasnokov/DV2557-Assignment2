@@ -65,7 +65,7 @@ public class Node {
     public class IDDFRETURN{
         Node found = null;//goal node
     }
-    
+    public long start = System.currentTimeMillis();
     public Node DLS(int depth, int player, GameState state){
         Node leaflist[] = new Node[6];
         if(depth == 0){//we are at the bottom of the search
@@ -127,7 +127,7 @@ public class Node {
     public Node IDDF(int player, GameState state){
         Node ret = null;
         int i = 0;
-        long start = System.currentTimeMillis();
+        start = System.currentTimeMillis();
         long dt = 0;
         do {
             //System.out.println("D = " + i);
@@ -135,7 +135,7 @@ public class Node {
             ret = DLS(i, player, state);//move to next phase and do depth search
             i++;
             dt = (System.currentTimeMillis() - start);
-        } while(dt <= (4500 / i));
+        } while(dt <= (4500 / i^2));
        /*
         for(int i = 0; i < 6; i++){//loop through different depths, the 6 is temporary and will be replaces with the time limited version
             System.out.println("D = " + i);
