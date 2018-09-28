@@ -218,16 +218,16 @@ public class AIClient implements Runnable
         root.parent = root;
         int myMove = 0;
 
-        addText("IDDF starting!");
+        //addText("IDDF starting!");
         Node goal = root.IDDF(player, currentBoard);//find optimal node
-        addText("IDDF complete");
+        //addText("IDDF complete");
         if(goal != null){//if goal is null something went wrong
             Node toRoot = goal;
-            addText("toRoot set");
+            //addText("toRoot set");
             while(toRoot.parent != root){//backtrace back to root to find next move
                 toRoot = toRoot.parent;
             }
-            addText("next node found");
+            //addText("next node found");
             for(int i = 0; i < 6; i++){//figure out which move was made by checking next node to root node
                 if(root.children[i] == toRoot){
                     myMove = i + 1;
