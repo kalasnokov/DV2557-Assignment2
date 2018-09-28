@@ -145,38 +145,6 @@ public class Node {
         }*/
         return ret;//goal found
     }
-    /*public String genTreeFullDepth(Node root, int depth, int myPlayer, GameState state){
-        String ret = "";
-        GameState predict;
-        for(int i = 0; i < 6; i ++){
-            predict = state.clone();
-            int pScore = 0;
-            boolean pValid = predict.moveIsPossible(i + 1);
-            if(!pValid){
-                pScore = -100000000;
-            }else{
-                predict.makeMove(i + 1);
-                pScore = predict.getScore(myPlayer);
-            }
-            int nextPlayer = predict.getNextPlayer();
-            //ret += nextPlayer + " != " + myPlayer + "\n";
-            boolean pMyTurn = false;
-            if(nextPlayer == myPlayer){
-                pMyTurn = true;
-            }
-            ret += "Node " + score + " : " + depth + "\n";
-            root.addChild(new Node(root, pScore, pMyTurn, depth, pValid), i);
-        }
-        depth = depth - 1;
-        if(depth > 0){
-            predict = state.clone();
-            for(int i = 0; i < 6; i ++){
-                ret += genTreeFullDepth(children[i], depth, myPlayer, predict);
-            }
-        }
-        return ret;
-    }*/
-    
     public int DS(){
         int ret = 0;
         
