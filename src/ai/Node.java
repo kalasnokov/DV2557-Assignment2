@@ -65,8 +65,9 @@ public class Node {
     public class IDDFRETURN{
         Node found = null;//goal node
     }
+    static int inf = 10000000;
     public long start = System.currentTimeMillis();
-    public Node DLS(int depth, int player, GameState state){
+    public Node DLS(int depth, int player, GameState state, int A, int B){
         Node leaflist[] = new Node[6];
         if(depth == 0){//we are at the bottom of the search
             
@@ -75,6 +76,15 @@ public class Node {
             return this;
             
         }else if(depth > 0){//bottom not reached, expand search
+            int value = 0;
+            boolean max = (state.getNextPlayer() == player);
+            if(!max){
+                //maximize my player
+                value = -inf;
+            }else{
+                //minimize other player
+                value = inf;
+            }
             for(int i = 0; i < 6; i++){//check all nodes
                 System.out.println("DLS loop i = " + i);
                 GameState predict = state.clone();
@@ -84,9 +94,22 @@ public class Node {
                     if(children[i] == null){//Check to see if node has been expanded
                         addChild(new Node(this, 0, (predict.getNextPlayer() == player), depth, true), i);//expand node
                         children[i].calcScore(predict, player);
+                        if(max){
+                            value = Math.max(value, children[i].score);
+                            A = Math.max(A, value);
+                            System.out.println("A = " + A);
+                        }else{
+                            value = Math.min(value, children[i].score);
+                            B = Math.min(B, value);
+                            System.out.println("B = " + B);
+                        }
+                    }
+                    if(A >= B){
+                        System.out.println("BREAKING");
+                        break;
                     }
                     System.out.println("2");
-                    leaflist[i] = children[i].DLS(depth-1, player, predict);//go deeper
+                    leaflist[i] = children[i].DLS(depth-1, player, predict, A, B);//go deeper
                     System.out.println("3");
 
                 }else{
@@ -132,7 +155,7 @@ public class Node {
         do {
             //System.out.println("D = " + i);
             //Måste fixa något sätt att skala med djupet
-            ret = DLS(i, player, state);//move to next phase and do depth search
+            ret = DLS(i, player, state, -inf, inf);//move to next phase and do depth search
             i++;
             dt = (System.currentTimeMillis() - start);
         } while(dt <= (4500 / i^2));
@@ -144,33 +167,6 @@ public class Node {
             
         }*/
         return ret;//goal found
-    }
-    public int DS(){
-        int ret = 0;
-        
-        int mult = 1;
-        if(!myTurn){
-            mult = -1;
-        }
-        
-        if(!isEmpty()){//node has children
-            int[] scores = new int[6];
-            for(int i = 0; i < 6; i++){
-                scores[i] = children[i].DS();
-            }
-            
-            int highest = 0;
-            for(int i = 0; i < 6; i++){
-                if(scores[i] > scores[highest]){
-                    highest = i;
-                }
-            }
-            
-            ret = (score * mult) + scores[highest];
-        } else{//final node
-            ret = score * mult;
-        }
-        return ret;
     }
     
     public String printNode(){
