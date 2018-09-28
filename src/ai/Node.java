@@ -63,6 +63,7 @@ public class Node {
         Node found = null;//goal node
     }
     static int inf = 10000000;
+    static int stopTime = 5;
     public long start = System.currentTimeMillis();
     public Node DLS(int depth, int player, GameState state, int A, int B, long time){
         Node leaflist[] = new Node[6];
@@ -86,7 +87,7 @@ public class Node {
             for(int i = 0; i < 6; i++){//check all nodes
                 //System.out.println("DLS loop i = " + i);
                 GameState predict = state.clone();
-                if(System.currentTimeMillis() - time > 5000.0){//internal time check for DLS, to not go deeper if timelimit has been exceeded
+                if(System.currentTimeMillis() - time > stopTime * 1000){//internal time check for DLS, to not go deeper if timelimit has been exceeded
                     break;
                 }
                 if(predict.moveIsPossible(i + 1)){//make sure move is legal
@@ -160,7 +161,7 @@ public class Node {
             ret = DLS(i, player, state, -inf, inf, start);//move to next phase and do depth search
             i++;
             dt = (System.currentTimeMillis() - start);
-        } while(dt <= 5000);
+        } while(dt <= stopTime * 1000);
         return ret;//goal found
     }
     
