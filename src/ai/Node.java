@@ -67,8 +67,9 @@ public class Node {
     }
     static int inf = 10000000;
     public long start = System.currentTimeMillis();
-    public Node DLS(int depth, int player, GameState state, int A, int B){
+    public Node DLS(int depth, int player, GameState state, int A, int B, long time){
         Node leaflist[] = new Node[6];
+        
         if(depth == 0){//we are at the bottom of the search
             
             System.out.println("Max depth reached.");
@@ -88,6 +89,9 @@ public class Node {
             for(int i = 0; i < 6; i++){//check all nodes
                 System.out.println("DLS loop i = " + i);
                 GameState predict = state.clone();
+                if(System.currentTimeMillis() - time > 5000.0){
+                    break;
+                }
                 if(predict.moveIsPossible(i + 1)){//make sure move is legal
                     predict.makeMove(i + 1);
                     System.out.println("1");
@@ -109,7 +113,7 @@ public class Node {
                         break;
                     }
                     System.out.println("2");
-                    leaflist[i] = children[i].DLS(depth-1, player, predict, A, B);//go deeper
+                    leaflist[i] = children[i].DLS(depth-1, player, predict, A, B, time);//go deeper
                     System.out.println("3");
 
                 }else{
@@ -155,10 +159,10 @@ public class Node {
         do {
             //System.out.println("D = " + i);
             //Måste fixa något sätt att skala med djupet
-            ret = DLS(i, player, state, -inf, inf);//move to next phase and do depth search
+            ret = DLS(i, player, state, -inf, inf, start);//move to next phase and do depth search
             i++;
             dt = (System.currentTimeMillis() - start);
-        } while(dt <= (4500 / i^2));
+        } while(dt <= 5000);
        /*
         for(int i = 0; i < 6; i++){//loop through different depths, the 6 is temporary and will be replaces with the time limited version
             System.out.println("D = " + i);
